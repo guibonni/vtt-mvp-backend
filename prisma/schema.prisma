@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  sessionsCreated Session[]
+  characters      Character[]
+  messages        Message[]
+  participations SessionParticipant[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  name         String
+  passwordHash String?
+  createdAt    DateTime @default(now())
+
+  createdById  String
+  createdBy    User     @relation(fields: [createdById], references: [id])
+
+  characters Character[]
+  messages   Message[]
+  participants SessionParticipant[]
+}
+
+model Character {
+  id        String   @id @default(uuid())
+  name      String
+  template  String
+  data      Json
+  createdAt DateTime @default(now())
+
+  userId    String
+  sessionId String
+
+  user      User    @relation(fields: [userId], references: [id])
+  session   Session @relation(fields: [sessionId], references: [id])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  type      MessageType
+  diceData  Json?
+  createdAt DateTime @default(now())
+
+  userId    String
+  sessionId String
+
+  user      User    @relation(fields: [userId], references: [id])
+  session   Session @relation(fields: [sessionId], references: [id])
+}
+
+enum MessageType {
+  TEXT
+  DICE
+  SYSTEM
+}
+
+model SessionParticipant {
+  id        String   @id @default(uuid())
+  joinedAt  DateTime @default(now())
+
+  userId    String
+  sessionId String
+
+  user      User    @relation(fields: [userId], references: [id])
+  session   Session @relation(fields: [sessionId], references: [id])
+
+  @@unique([userId, sessionId])
+}

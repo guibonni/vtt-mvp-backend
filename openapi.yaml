@@ -1,0 +1,779 @@
+openapi: 3.0.3
+info:
+  title: VTT MVP Backend API
+  version: 1.0.0
+  description: Contrato OpenAPI dos endpoints implementados no backend.
+servers:
+  - url: http://localhost:4000
+    description: Local
+
+tags:
+  - name: Auth
+  - name: Sessions
+  - name: Characters
+  - name: Messages
+
+paths:
+  /:
+    get:
+      tags: [Sessions]
+      summary: Healthcheck
+      responses:
+        '200':
+          description: API online
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: VTT Backend Running
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Registrar usuário
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              name: Gui
+              email: gui@example.com
+              password: "123456"
+      responses:
+        '200':
+          description: Usuário registrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login do usuário
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: gui@example.com
+              password: "123456"
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions:
+    get:
+      tags: [Sessions]
+      summary: Listar sessões
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de sessões
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionListItem'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Erro de regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Sessions]
+      summary: Criar sessão
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+            example:
+              name: Mesa de D&D
+              password: segreda
+      responses:
+        '200':
+          description: Sessão criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Erro de regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/join:
+    post:
+      tags: [Sessions]
+      summary: Entrar em uma sessão
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinSessionRequest'
+            example:
+              sessionId: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+              password: segreda
+      responses:
+        '200':
+          description: Participação criada ou já existente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionParticipant'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{sessionId}:
+    get:
+      tags: [Sessions]
+      summary: Obter uma sessão por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Sessão encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{sessionId}/characters:
+    get:
+      tags: [Characters]
+      summary: Listar personagens da sessão
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Lista de personagens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CharacterListItem'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Characters]
+      summary: Criar personagem na sessão
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCharacterRequest'
+            example:
+              name: Arannis
+              template: mage
+              data:
+                hp: 12
+                mana: 20
+                str: 8
+                int: 16
+      responses:
+        '200':
+          description: Personagem criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{sessionId}/characters/{characterId}:
+    put:
+      tags: [Characters]
+      summary: Atualizar dados de personagem
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/CharacterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCharacterRequest'
+            example:
+              data:
+                hp: 9
+                mana: 18
+      responses:
+        '200':
+          description: Personagem atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Characters]
+      summary: Remover personagem
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '200':
+          description: Personagem removido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSuccess'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{sessionId}/messages:
+    get:
+      tags: [Messages]
+      summary: Listar mensagens da sessão
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Lista de mensagens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Messages]
+      summary: Enviar mensagem na sessão
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageRequest'
+            example:
+              content: "Rolando 1d20"
+              type: DICE
+              diceData:
+                expression: 1d20
+                result: 17
+      responses:
+        '200':
+          description: Mensagem criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inválido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Usuário não participa da sessão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID da sessão
+      example: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+    CharacterId:
+      name: characterId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID do personagem
+      example: "1d53fb9f-b2f1-4bfa-9f6c-4a8aef532d0c"
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+      example:
+        message: Token inválido
+
+    DeleteSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+      required: [success]
+
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [name, email, password]
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+
+    UserPublic:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, email, createdAt]
+      example:
+        id: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+        name: Gui
+        email: gui@example.com
+        createdAt: "2026-03-05T10:30:00.000Z"
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserPublic'
+        token:
+          type: string
+      required: [user, token]
+      example:
+        user:
+          id: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+          name: Gui
+          email: gui@example.com
+          createdAt: "2026-03-05T10:30:00.000Z"
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+          nullable: true
+      required: [name]
+
+    JoinSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        password:
+          type: string
+      required: [sessionId]
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        passwordHash:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        createdById:
+          type: string
+      required: [id, name, createdAt, createdById]
+      example:
+        id: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+        name: Mesa de D&D
+        passwordHash: "$2b$10$..."
+        createdAt: "2026-03-05T10:35:00.000Z"
+        createdById: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+
+    SessionListItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: object
+          properties:
+            name:
+              type: string
+          required: [name]
+      required: [id, name, createdAt, createdBy]
+      example:
+        id: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+        name: Mesa de D&D
+        createdAt: "2026-03-05T10:35:00.000Z"
+        createdBy:
+          name: Gui
+
+    SessionParticipant:
+      type: object
+      properties:
+        id:
+          type: string
+        joinedAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+        sessionId:
+          type: string
+      required: [id, joinedAt, userId, sessionId]
+      example:
+        id: "b4a59f9b-4bdb-40c2-b5d4-12c4ac6ef2fd"
+        joinedAt: "2026-03-05T10:40:00.000Z"
+        userId: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+        sessionId: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+
+    CreateCharacterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        template:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+      required: [name, template, data]
+
+    UpdateCharacterRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+      required: [data]
+
+    Character:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        template:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+        sessionId:
+          type: string
+      required: [id, name, template, data, createdAt, userId, sessionId]
+      example:
+        id: "1d53fb9f-b2f1-4bfa-9f6c-4a8aef532d0c"
+        name: Arannis
+        template: mage
+        data:
+          hp: 12
+          mana: 20
+        createdAt: "2026-03-05T10:45:00.000Z"
+        userId: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+        sessionId: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+
+    CharacterListItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        template:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required: [id, name]
+      required: [id, name, template, data, createdAt, user]
+
+    CreateMessageRequest:
+      type: object
+      properties:
+        content:
+          type: string
+        type:
+          type: string
+          enum: [TEXT, DICE]
+        diceData:
+          type: object
+          nullable: true
+          additionalProperties: true
+      required: [content, type]
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        type:
+          type: string
+          enum: [TEXT, DICE, SYSTEM]
+        diceData:
+          type: object
+          nullable: true
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+        sessionId:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required: [id, name]
+      required: [id, content, type, createdAt, userId, sessionId, user]
+      example:
+        id: "7eced5b5-62cc-4868-a5c1-036d12d4c53b"
+        content: "Rolando 1d20"
+        type: DICE
+        diceData:
+          expression: 1d20
+          result: 17
+        createdAt: "2026-03-05T10:50:00.000Z"
+        userId: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+        sessionId: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
+        user:
+          id: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+          name: Gui
