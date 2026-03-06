@@ -26,7 +26,7 @@ export async function list(req: AuthRequest, res: Response) {
   try {
     const sessionId = getRequiredParam(req.params.sessionId, "sessionId");
 
-    const characters = await getSessionCharacters(sessionId);
+    const characters = await getSessionCharacters(sessionId, req.userId!);
 
     res.json(characters);
   } catch (error: any) {

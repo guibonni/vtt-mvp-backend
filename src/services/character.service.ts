@@ -20,9 +20,20 @@ export async function createCharacter(
   return character;
 }
 
-export async function getSessionCharacters(sessionId: string) {
+export async function getSessionCharacters(sessionId: string, userId: string) {
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+    select: { createdById: true },
+  });
+
+  if (!session) {
+    throw new Error("Sessão não encontrada");
+  }
+
+  const isSessionCreator = session.createdById === userId;
+
   const characters = await prisma.character.findMany({
-    where: { sessionId },
+    where: isSessionCreator ? { sessionId } : { sessionId, userId },
     select: {
       id: true,
       name: true,
