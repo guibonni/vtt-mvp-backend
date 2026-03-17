@@ -1,0 +1,504 @@
+{
+  "info": {
+    "_postman_id": "bf331efb-a489-4297-bfab-d370f1367478",
+    "name": "VTT-MVP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "3060820"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n \"name\": \"Guilherme\",\r\n \"email\": \"gui3@email.com\",\r\n \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/auth/register",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Token exists and is a non-empty string\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"token\");",
+                  "    pm.expect(json.token).to.be.a(\"string\");",
+                  "    pm.expect(json.token.trim()).to.not.equal(\"\");",
+                  "});",
+                  "",
+                  "// Save token to active environment",
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json && typeof json.token === \"string\" && json.token.trim()) {",
+                  "        pm.environment.set(\"auth_token\", json.token);",
+                  "    }",
+                  "} catch (e) {",
+                  "    // Ignore parse errors; assertions above will catch invalid JSON",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n \"email\": \"teste@1.com\",\r\n \"password\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/auth/login",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sessions",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/sessions",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Hadaverso\",\r\n    \"password\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/sessions",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "join",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"sessionId\": \"bf50587f-1927-480b-8285-0aaa2e4eeddf\",\r\n    \"password\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/sessions/join",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions",
+                "join"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/sessions/:id",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "characters",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/sessions/:id/characters",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions",
+                ":id",
+                "characters"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Hadarai\",\r\n    \"template\": \"dnd\",\r\n    \"data\": \"{}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/sessions/:id/characters",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions",
+                ":id",
+                "characters"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"data\": \"{charisma: 20}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/sessions/:id/characters/:characterId",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions",
+                ":id",
+                "characters",
+                ":characterId"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                },
+                {
+                  "key": "characterId",
+                  "value": "c35fbddf-9b6c-4a13-9fe2-f5a014620ffb"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "remove",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/sessions/:id/characters/:characterId",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "sessions",
+                ":id",
+                "characters",
+                ":characterId"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                },
+                {
+                  "key": "characterId",
+                  "value": "c35fbddf-9b6c-4a13-9fe2-f5a014620ffb"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:4000/sessions/:id/messages",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "sessions",
+                ":id",
+                "messages"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "send",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"Ola Larissa\",\r\n    \"type\": \"TEXT\",\r\n    \"diceData\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:4000/sessions/:id/messages",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "sessions",
+                ":id",
+                "messages"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
