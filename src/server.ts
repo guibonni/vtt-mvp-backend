@@ -14,6 +14,7 @@ import authRoutes from "./routes/auth.routes";
 import sessionRoutes from "./routes/session.routes";
 import characterRoutes from "./routes/character.routes";
 import messageRoutes from "./routes/message.routes";
+import templateRoutes from "./routes/template.routes";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use(authMiddleware);
 app.use("/sessions", sessionRoutes);
 app.use("/sessions", characterRoutes);
 app.use("/sessions", messageRoutes);
+app.use("/templates", templateRoutes);
 
 app.get("/", (_req, res) => {
   res.send("VTT Backend Running");

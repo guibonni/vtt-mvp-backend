@@ -36,7 +36,7 @@ describe("character.service", () => {
 
     const result = await createCharacter(
       "Aragorn",
-      "dnd5e",
+      "template-1",
       { level: 5 },
       "user-1",
       "session-1",
@@ -45,7 +45,7 @@ describe("character.service", () => {
     expect(prismaMock.character.create).toHaveBeenCalledWith({
       data: {
         name: "Aragorn",
-        template: "dnd5e",
+        templateId: "template-1",
         data: { level: 5 },
         userId: "user-1",
         sessionId: "session-1",
@@ -64,7 +64,12 @@ describe("character.service", () => {
 
   it("lists all session characters for the session creator", async () => {
     prismaMock.session.findUnique.mockResolvedValue({ createdById: "user-1" });
-    prismaMock.character.findMany.mockResolvedValue([{ id: "character-1" }]);
+    prismaMock.character.findMany.mockResolvedValue([
+      {
+        id: "character-1",
+        template: { name: "Ranger", data: { class: "ranger" } },
+      },
+    ]);
 
     const result = await getSessionCharacters("session-1", "user-1");
 
@@ -73,9 +78,14 @@ describe("character.service", () => {
       select: {
         id: true,
         name: true,
-        template: true,
         data: true,
         createdAt: true,
+        template: {
+          select: {
+            name: true,
+            data: true,
+          },
+        },
         user: {
           select: {
             id: true,
@@ -84,23 +94,38 @@ describe("character.service", () => {
         },
       },
     });
-    expect(result).toEqual([{ id: "character-1" }]);
+    expect(result).toEqual([
+      {
+        id: "character-1",
+        template: { name: "Ranger", data: { class: "ranger" } },
+      },
+    ]);
   });
 
   it("lists only the user's characters when user is not the session creator", async () => {
     prismaMock.session.findUnique.mockResolvedValue({ createdById: "user-2" });
-    prismaMock.character.findMany.mockResolvedValue([{ id: "character-1" }]);
+    prismaMock.character.findMany.mockResolvedValue([
+      {
+        id: "character-1",
+        template: { name: "Rogue", data: { class: "rogue" } },
+      },
+    ]);
 
-    await getSessionCharacters("session-1", "user-1");
+    const result = await getSessionCharacters("session-1", "user-1");
 
     expect(prismaMock.character.findMany).toHaveBeenCalledWith({
       where: { sessionId: "session-1", userId: "user-1" },
       select: {
         id: true,
         name: true,
-        template: true,
         data: true,
         createdAt: true,
+        template: {
+          select: {
+            name: true,
+            data: true,
+          },
+        },
         user: {
           select: {
             id: true,
@@ -109,6 +134,12 @@ describe("character.service", () => {
         },
       },
     });
+    expect(result).toEqual([
+      {
+        id: "character-1",
+        template: { name: "Rogue", data: { class: "rogue" } },
+      },
+    ]);
   });
 
   it("throws when updating a character from another session", async () => {

@@ -2,7 +2,7 @@ import { prisma } from "../config/prisma";
 
 export async function createCharacter(
   name: string,
-  template: string,
+  templateId: string,
   data: any,
   userId: string,
   sessionId: string,
@@ -10,7 +10,7 @@ export async function createCharacter(
   const character = await prisma.character.create({
     data: {
       name,
-      template,
+      templateId,
       data,
       userId,
       sessionId,
@@ -37,9 +37,14 @@ export async function getSessionCharacters(sessionId: string, userId: string) {
     select: {
       id: true,
       name: true,
-      template: true,
       data: true,
       createdAt: true,
+      template: {
+        select: {
+          name: true,
+          data: true,
+        },
+      },
       user: {
         select: {
           id: true,
@@ -48,7 +53,7 @@ export async function getSessionCharacters(sessionId: string, userId: string) {
       },
     },
   });
-
+ 
   return characters;
 }
 

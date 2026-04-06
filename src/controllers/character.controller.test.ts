@@ -30,7 +30,7 @@ describe("character.controller", () => {
   it("create returns the created character", async () => {
     const req = {
       params: { sessionId: "session-1" },
-      body: { name: "Aragorn", template: "dnd5e", data: { hp: 10 } },
+      body: { name: "Aragorn", templateId: "template-1", data: { hp: 10 } },
       userId: "user-1",
     } as any;
     const res = createResponse();
@@ -41,7 +41,7 @@ describe("character.controller", () => {
 
     expect(createCharacterMock).toHaveBeenCalledWith(
       "Aragorn",
-      "dnd5e",
+      "template-1",
       { hp: 10 },
       "user-1",
       "session-1",

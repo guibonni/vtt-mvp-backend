@@ -13,10 +13,11 @@ model User {
   passwordHash String
   createdAt    DateTime @default(now())
 
-  sessionsCreated Session[]
-  characters      Character[]
-  messages        Message[]
-  participations SessionParticipant[]
+  sessionsCreated  Session[]
+  templatesCreated Template[]
+  characters       Character[]
+  messages         Message[]
+  participations   SessionParticipant[]
 }
 
 model Session {
@@ -25,40 +26,53 @@ model Session {
   passwordHash String?
   createdAt    DateTime @default(now())
 
-  createdById  String
-  createdBy    User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
 
-  characters Character[]
-  messages   Message[]
+  characters   Character[]
+  messages     Message[]
   participants SessionParticipant[]
 }
 
 model Character {
   id        String   @id @default(uuid())
   name      String
-  template  String
   data      Json
   createdAt DateTime @default(now())
 
-  userId    String
-  sessionId String
+  userId     String
+  sessionId  String
+  templateId String
 
-  user      User    @relation(fields: [userId], references: [id])
-  session   Session @relation(fields: [sessionId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  session  Session  @relation(fields: [sessionId], references: [id])
+  template Template @relation(fields: [templateId], references: [id])
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String
+  data      Json
+  createdAt DateTime @default(now())
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  characters Character[]
 }
 
 model Message {
-  id        String   @id @default(uuid())
+  id        String      @id @default(uuid())
   content   String
   type      MessageType
   diceData  Json?
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
 
   userId    String
   sessionId String
 
-  user      User    @relation(fields: [userId], references: [id])
-  session   Session @relation(fields: [sessionId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
 }
 
 enum MessageType {
@@ -68,14 +82,14 @@ enum MessageType {
 }
 
 model SessionParticipant {
-  id        String   @id @default(uuid())
-  joinedAt  DateTime @default(now())
+  id       String   @id @default(uuid())
+  joinedAt DateTime @default(now())
 
   userId    String
   sessionId String
 
-  user      User    @relation(fields: [userId], references: [id])
-  session   Session @relation(fields: [sessionId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
 
   @@unique([userId, sessionId])
 }

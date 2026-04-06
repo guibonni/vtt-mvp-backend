@@ -11,10 +11,10 @@ import { getRequiredParam } from "../utils/parameter-validation";
 
 export async function create(req: AuthRequest, res: Response) {
   try {
-    const { name, template, data } = req.body;
+    const { name, templateId, data } = req.body;
     const sessionId = getRequiredParam(req.params.sessionId, "sessionId");
 
-    const character = await createCharacter(name, template, data, req.userId!, sessionId);
+    const character = await createCharacter(name, templateId, data, req.userId!, sessionId);
 
     res.json(character);
   } catch (error: any) {

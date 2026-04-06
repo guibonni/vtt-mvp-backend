@@ -1,4 +1,4 @@
-openapi: 3.0.3
+Ôªøopenapi: 3.0.3
 info:
   title: VTT MVP Backend API
   version: 1.0.0
@@ -11,6 +11,7 @@ tags:
   - name: Auth
   - name: Sessions
   - name: Characters
+  - name: Templates
   - name: Messages
 
 paths:
@@ -30,7 +31,7 @@ paths:
   /auth/register:
     post:
       tags: [Auth]
-      summary: Registrar usu·rio
+      summary: Registrar usu√°rio
       security: []
       requestBody:
         required: true
@@ -44,13 +45,13 @@ paths:
               password: "123456"
       responses:
         '200':
-          description: Usu·rio registrado com sucesso
+          description: Usu√°rio registrado com sucesso
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
@@ -59,7 +60,7 @@ paths:
   /auth/login:
     post:
       tags: [Auth]
-      summary: Login do usu·rio
+      summary: Login do usu√°rio
       security: []
       requestBody:
         required: true
@@ -78,7 +79,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
         '400':
-          description: Credenciais inv·lidas
+          description: Credenciais inv√°lidas
           content:
             application/json:
               schema:
@@ -87,12 +88,12 @@ paths:
   /sessions:
     get:
       tags: [Sessions]
-      summary: Listar sessıes
+      summary: Listar sess√µes
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Lista de sessıes
+          description: Lista de sess√µes
           content:
             application/json:
               schema:
@@ -100,13 +101,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/SessionListItem'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '400':
-          description: Erro de regra de negÛcio
+          description: Erro de regra de neg√≥cio
           content:
             application/json:
               schema:
@@ -114,7 +115,7 @@ paths:
 
     post:
       tags: [Sessions]
-      summary: Criar sess„o
+      summary: Criar sess√£o
       security:
         - bearerAuth: []
       requestBody:
@@ -128,19 +129,19 @@ paths:
               password: segreda
       responses:
         '200':
-          description: Sess„o criada
+          description: Sess√£o criada
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Session'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '400':
-          description: Erro de regra de negÛcio
+          description: Erro de regra de neg√≥cio
           content:
             application/json:
               schema:
@@ -149,7 +150,7 @@ paths:
   /sessions/join:
     post:
       tags: [Sessions]
-      summary: Entrar em uma sess„o
+      summary: Entrar em uma sess√£o
       security:
         - bearerAuth: []
       requestBody:
@@ -163,19 +164,19 @@ paths:
               password: segreda
       responses:
         '200':
-          description: ParticipaÁ„o criada ou j· existente
+          description: Participa√ß√£o criada ou j√° existente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SessionParticipant'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
@@ -184,32 +185,32 @@ paths:
   /sessions/{sessionId}:
     get:
       tags: [Sessions]
-      summary: Obter uma sess„o por ID
+      summary: Obter uma sess√£o por ID
       security:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/SessionId'
       responses:
         '200':
-          description: Sess„o encontrada
+          description: Sess√£o encontrada
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Session'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
           content:
             application/json:
               schema:
@@ -218,7 +219,7 @@ paths:
   /sessions/{sessionId}/characters:
     get:
       tags: [Characters]
-      summary: Listar personagens da sess„o
+      summary: Listar personagens da sess√£o
       security:
         - bearerAuth: []
       parameters:
@@ -233,19 +234,19 @@ paths:
                 items:
                   $ref: '#/components/schemas/CharacterListItem'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
           content:
             application/json:
               schema:
@@ -253,7 +254,7 @@ paths:
 
     post:
       tags: [Characters]
-      summary: Criar personagem na sess„o
+      summary: Criar personagem na sess√£o
       security:
         - bearerAuth: []
       parameters:
@@ -266,7 +267,7 @@ paths:
               $ref: '#/components/schemas/CreateCharacterRequest'
             example:
               name: Arannis
-              template: mage
+              templateId: "template-1"
               data:
                 hp: 12
                 mana: 20
@@ -280,19 +281,192 @@ paths:
               schema:
                 $ref: '#/components/schemas/Character'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /templates:
+    get:
+      tags: [Templates]
+      summary: Listar templates
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filtra templates por nome
+          example: mage
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filtra templates pelo usu√°rio criador
+          example: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+      responses:
+        '200':
+          description: Lista de templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Template'
+        '400':
+          description: Erro de valida√ß√£o/regra de neg√≥cio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inv√°lido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Templates]
+      summary: Criar template
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateRequest'
+            example:
+              name: Mage
+              data:
+                hp: 8
+                mana: 20
+                intelligence: 16
+      responses:
+        '200':
+          description: Template criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Erro de valida√ß√£o/regra de neg√≥cio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inv√°lido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /templates/{templateId}:
+    get:
+      tags: [Templates]
+      summary: Obter template por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TemplateId'
+      responses:
+        '200':
+          description: Template encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Erro de valida√ß√£o/regra de neg√≥cio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inv√°lido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Templates]
+      summary: Atualizar template
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TemplateId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTemplateRequest'
+            example:
+              name: Mage
+              data:
+                hp: 9
+                mana: 24
+      responses:
+        '200':
+          description: Template atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Erro de valida√ß√£o/regra de neg√≥cio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inv√°lido/ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Templates]
+      summary: Remover template
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TemplateId'
+      responses:
+        '200':
+          description: Template removido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSuccess'
+        '400':
+          description: Erro de valida√ß√£o/regra de neg√≥cio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
@@ -325,19 +499,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Character'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
           content:
             application/json:
               schema:
@@ -359,19 +533,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/DeleteSuccess'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
           content:
             application/json:
               schema:
@@ -380,7 +554,7 @@ paths:
   /sessions/{sessionId}/messages:
     get:
       tags: [Messages]
-      summary: Listar mensagens da sess„o
+      summary: Listar mensagens da sess√£o
       security:
         - bearerAuth: []
       parameters:
@@ -395,19 +569,19 @@ paths:
                 items:
                   $ref: '#/components/schemas/Message'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
           content:
             application/json:
               schema:
@@ -415,7 +589,7 @@ paths:
 
     post:
       tags: [Messages]
-      summary: Enviar mensagem na sess„o
+      summary: Enviar mensagem na sess√£o
       security:
         - bearerAuth: []
       parameters:
@@ -440,19 +614,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
         '400':
-          description: Erro de validaÁ„o/regra de negÛcio
+          description: Erro de valida√ß√£o/regra de neg√≥cio
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token inv·lido/ausente
+          description: Token inv√°lido/ausente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Usu·rio n„o participa da sess„o
+          description: Usu√°rio n√£o participa da sess√£o
           content:
             application/json:
               schema:
@@ -472,7 +646,7 @@ components:
       required: true
       schema:
         type: string
-      description: ID da sess„o
+      description: ID da sess√£o
       example: "2d2df0fb-ef95-460d-b344-61e2bd2d3020"
     CharacterId:
       name: characterId
@@ -482,6 +656,14 @@ components:
         type: string
       description: ID do personagem
       example: "1d53fb9f-b2f1-4bfa-9f6c-4a8aef532d0c"
+    TemplateId:
+      name: templateId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID do template
+      example: "template-1"
 
   schemas:
     ErrorResponse:
@@ -491,7 +673,7 @@ components:
           type: string
       required: [message]
       example:
-        message: Token inv·lido
+        message: Token inv√°lido
 
     DeleteSuccess:
       type: object
@@ -649,12 +831,12 @@ components:
       properties:
         name:
           type: string
-        template:
+        templateId:
           type: string
         data:
           type: object
           additionalProperties: true
-      required: [name, template, data]
+      required: [name, templateId, data]
 
     UpdateCharacterRequest:
       type: object
@@ -671,7 +853,7 @@ components:
           type: string
         name:
           type: string
-        template:
+        templateId:
           type: string
         data:
           type: object
@@ -683,11 +865,11 @@ components:
           type: string
         sessionId:
           type: string
-      required: [id, name, template, data, createdAt, userId, sessionId]
+      required: [id, name, templateId, data, createdAt, userId, sessionId]
       example:
         id: "1d53fb9f-b2f1-4bfa-9f6c-4a8aef532d0c"
         name: Arannis
-        template: mage
+        templateId: "template-1"
         data:
           hp: 12
           mana: 20
@@ -703,7 +885,14 @@ components:
         name:
           type: string
         template:
-          type: string
+          type: object
+          properties:
+            name:
+              type: string
+            data:
+              type: object
+              additionalProperties: true
+          required: [name, data]
         data:
           type: object
           additionalProperties: true
@@ -719,6 +908,60 @@ components:
               type: string
           required: [id, name]
       required: [id, name, template, data, createdAt, user]
+
+    CreateTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+      required: [name, data]
+
+    UpdateTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+      required: [name, data]
+
+    Template:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required: [id, name]
+      required: [id, name, data, createdAt, createdBy]
+      example:
+        id: "template-1"
+        name: Mage
+        data:
+          hp: 8
+          mana: 20
+          intelligence: 16
+        createdAt: "2026-04-06T12:00:00.000Z"
+        createdBy:
+          id: "4f8ed00e-e13a-4672-a85d-4f484f073032"
+          name: Gui
 
     CreateMessageRequest:
       type: object
@@ -777,3 +1020,4 @@ components:
         user:
           id: "4f8ed00e-e13a-4672-a85d-4f484f073032"
           name: Gui
+
