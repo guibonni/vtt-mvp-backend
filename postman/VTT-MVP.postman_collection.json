@@ -16,7 +16,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n \"name\": \"Guilherme\",\r\n \"email\": \"gui3@email.com\",\r\n \"password\": \"123456\"\r\n}",
+              "raw": "{\r\n \"name\": \"Guilherme\",\r\n \"email\": \"teste@1.com\",\r\n \"password\": \"123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -296,7 +296,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Hadarai\",\r\n    \"template\": \"dnd\",\r\n    \"data\": \"{}\"\r\n}",
+              "raw": "{\r\n    \"name\": \"Andras\",\r\n    \"templateId\": \"91cb5088-0102-4ae1-9010-ca2301e3bf06\",\r\n    \"data\": \"{}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -492,6 +492,158 @@
                 {
                   "key": "id",
                   "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "templates",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/templates?name=d",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "templates"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "d",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/templates/:templateId",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "templates",
+                ":templateId"
+              ],
+              "variable": [
+                {
+                  "key": "templateId",
+                  "value": "29b4090775fdea92cb55759d7b921e1a"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"dnd\",\r\n    \"data\": \"{}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/templates",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"dnd\",\r\n    \"data\": {\"sections\":[\r\n  {\r\n    \"id\": \"identity\",\r\n    \"title\": \"Identidade\",\r\n    \"fields\": [\r\n      {\r\n        \"id\": \"gender\",\r\n        \"label\": \"Gênero\",\r\n        \"type\": \"text\",\r\n        \"columnSpan\": 6\r\n      },\r\n      {\r\n        \"id\": \"class\",\r\n        \"label\": \"Classe\",\r\n        \"type\": \"text\",\r\n        \"columnSpan\": 6\r\n      },\r\n      {\r\n        \"id\": \"subclass\",\r\n        \"label\": \"Subclasse\",\r\n        \"type\": \"text\",\r\n        \"columnSpan\": 6\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"id\": \"attributes\",\r\n    \"title\": \"Atributos\",\r\n    \"fields\": [\r\n      {\r\n        \"id\": \"dexterity\",\r\n        \"label\": \"Destreza\",\r\n        \"type\": \"number\",\r\n        \"columnSpan\": 4,\r\n        \"dice\": \"1d20\"\r\n      },\r\n      {\r\n        \"id\": \"strength\",\r\n        \"label\": \"Força\",\r\n        \"type\": \"number\",\r\n        \"columnSpan\": 4,\r\n        \"dice\": \"1d20\"\r\n      }\r\n    ]\r\n  }\r\n]\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/templates/:templateId",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "templates",
+                ":templateId"
+              ],
+              "variable": [
+                {
+                  "key": "templateId",
+                  "value": "91cb5088-0102-4ae1-9010-ca2301e3bf06"
                 }
               ]
             }
