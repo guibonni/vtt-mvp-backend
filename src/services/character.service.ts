@@ -41,6 +41,7 @@ export async function getSessionCharacters(sessionId: string, userId: string) {
       createdAt: true,
       template: {
         select: {
+          id: true,
           name: true,
           data: true,
         },

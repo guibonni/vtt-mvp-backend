@@ -67,7 +67,7 @@ describe("character.service", () => {
     prismaMock.character.findMany.mockResolvedValue([
       {
         id: "character-1",
-        template: { name: "Ranger", data: { class: "ranger" } },
+        template: { id: "123", name: "Ranger", data: { class: "ranger" } },
       },
     ]);
 
@@ -82,6 +82,7 @@ describe("character.service", () => {
         createdAt: true,
         template: {
           select: {
+            id: true,
             name: true,
             data: true,
           },
@@ -97,7 +98,7 @@ describe("character.service", () => {
     expect(result).toEqual([
       {
         id: "character-1",
-        template: { name: "Ranger", data: { class: "ranger" } },
+        template: { id: "123", name: "Ranger", data: { class: "ranger" } },
       },
     ]);
   });
@@ -107,7 +108,7 @@ describe("character.service", () => {
     prismaMock.character.findMany.mockResolvedValue([
       {
         id: "character-1",
-        template: { name: "Rogue", data: { class: "rogue" } },
+        template: { id: "456", name: "Rogue", data: { class: "rogue" } },
       },
     ]);
 
@@ -122,6 +123,7 @@ describe("character.service", () => {
         createdAt: true,
         template: {
           select: {
+            id: true,
             name: true,
             data: true,
           },
@@ -137,7 +139,7 @@ describe("character.service", () => {
     expect(result).toEqual([
       {
         id: "character-1",
-        template: { name: "Rogue", data: { class: "rogue" } },
+        template: { id: "456", name: "Rogue", data: { class: "rogue" } },
       },
     ]);
   });
