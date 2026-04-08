@@ -8,6 +8,7 @@ import {
 
 import { io } from "../server"
 import { getRequiredParam } from "../utils/parameter-validation";
+import { sendErrorResponse } from "../utils/api-error";
 
 export async function sendMessage(req: AuthRequest, res: Response) {
 
@@ -29,9 +30,7 @@ export async function sendMessage(req: AuthRequest, res: Response) {
     res.json(message)
 
   } catch (error: any) {
-
-    res.status(400).json({ message: error.message })
-
+    sendErrorResponse(res, 400, "message.controller.sendMessage", error)
   }
 }
 
@@ -46,8 +45,6 @@ export async function listMessages(req: AuthRequest, res: Response) {
     res.json(messages)
 
   } catch (error: any) {
-
-    res.status(400).json({ message: error.message })
-
+    sendErrorResponse(res, 400, "message.controller.listMessages", error)
   }
 }

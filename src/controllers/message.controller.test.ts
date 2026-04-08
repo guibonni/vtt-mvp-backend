@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) =>
+    res.status(status).json({ message: "Nao foi possivel processar a solicitacao." }),
+  ),
+}));
+
 const { createMessageMock, getSessionMessagesMock, ioMock } = vi.hoisted(() => ({
   createMessageMock: vi.fn(),
   getSessionMessagesMock: vi.fn(),
@@ -68,7 +74,7 @@ describe("message.controller", () => {
     expect(res.json).toHaveBeenCalledWith([{ id: "message-1" }]);
   });
 
-  it("returns 400 when sessionId is missing", async () => {
+  it("returns a generic 400 response when sessionId is missing", async () => {
     const req = {
       params: {},
       body: { content: "Oi", type: "TEXT", diceData: null },
@@ -81,7 +87,7 @@ describe("message.controller", () => {
     expect(createMessageMock).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Parametro invalido: sessionId",
+      message: "Nao foi possivel processar a solicitacao.",
     });
   });
 });

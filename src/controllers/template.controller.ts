@@ -8,6 +8,7 @@ import {
   listTemplates,
   updateTemplate,
 } from "../services/template.service";
+import { sendErrorResponse } from "../utils/api-error";
 import { getRequiredParam } from "../utils/parameter-validation";
 
 export async function create(req: AuthRequest, res: Response) {
@@ -18,7 +19,7 @@ export async function create(req: AuthRequest, res: Response) {
 
     res.json(template);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "template.controller.create", error);
   }
 }
 
@@ -32,7 +33,7 @@ export async function list(req: Request, res: Response) {
 
     res.json(templates);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "template.controller.list", error);
   }
 }
 
@@ -44,7 +45,7 @@ export async function get(req: Request, res: Response) {
 
     res.json(template);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "template.controller.get", error);
   }
 }
 
@@ -62,7 +63,7 @@ export async function update(req: AuthRequest, res: Response) {
 
     res.json(template);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "template.controller.update", error);
   }
 }
 
@@ -74,6 +75,6 @@ export async function remove(req: AuthRequest, res: Response) {
 
     res.json({ success: true });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "template.controller.remove", error);
   }
 }

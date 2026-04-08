@@ -7,6 +7,7 @@ import {
   joinSession,
   getSession
 } from "../services/session.service"
+import { sendErrorResponse } from "../utils/api-error"
 import { getRequiredParam } from "../utils/parameter-validation"
 
 export async function create(req: AuthRequest, res: Response) {
@@ -24,9 +25,7 @@ export async function create(req: AuthRequest, res: Response) {
     res.json(session)
 
   } catch (error: any) {
-
-    res.status(400).json({ message: error.message })
-
+    sendErrorResponse(res, 400, "session.controller.create", error)
   }
 }
 
@@ -39,9 +38,7 @@ export async function list(req: AuthRequest, res: Response) {
     res.json(sessions)
 
   } catch (error: any) {
-
-    res.status(400).json({ message: error.message })
-
+    sendErrorResponse(res, 400, "session.controller.list", error)
   }
 }
 
@@ -56,9 +53,7 @@ export async function join(req: AuthRequest, res: Response) {
     res.json(session)
 
   } catch (error: any) {
-
-    res.status(400).json({ message: error.message })
-
+    sendErrorResponse(res, 400, "session.controller.join", error)
   }
 }
 
@@ -73,9 +68,7 @@ export async function get(req: AuthRequest, res: Response) {
     res.json(session)
 
   } catch (error: any) {
-
-    res.status(400).json({ message: error.message })
-    
+    sendErrorResponse(res, 400, "session.controller.get", error)
   }
 
 }

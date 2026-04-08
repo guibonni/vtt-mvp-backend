@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) =>
+    res.status(status).json({ message: "Nao foi possivel processar a solicitacao." }),
+  ),
+}));
+
 const { registerUserMock, loginUserMock } = vi.hoisted(() => ({
   registerUserMock: vi.fn(),
   loginUserMock: vi.fn(),
@@ -40,7 +46,7 @@ describe("auth.controller", () => {
     expect(res.json).toHaveBeenCalledWith({ token: "jwt-token" });
   });
 
-  it("register returns 400 when service throws", async () => {
+  it("register returns a generic 400 response when service throws", async () => {
     const req = {
       body: {
         name: "Gui",
@@ -50,12 +56,14 @@ describe("auth.controller", () => {
     } as any;
     const res = createResponse();
 
-    registerUserMock.mockRejectedValue(new Error("Email já registrado"));
+    registerUserMock.mockRejectedValue(new Error("Email ja registrado"));
 
     await register(req, res as any);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Email já registrado" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Nao foi possivel processar a solicitacao.",
+    });
   });
 
   it("login delegates to the service and returns the payload", async () => {
@@ -75,7 +83,7 @@ describe("auth.controller", () => {
     expect(res.json).toHaveBeenCalledWith({ token: "jwt-token" });
   });
 
-  it("login returns 400 when service throws", async () => {
+  it("login returns a generic 400 response when service throws", async () => {
     const req = {
       body: {
         email: "gui@example.com",
@@ -84,11 +92,13 @@ describe("auth.controller", () => {
     } as any;
     const res = createResponse();
 
-    loginUserMock.mockRejectedValue(new Error("Credenciais inválidas"));
+    loginUserMock.mockRejectedValue(new Error("Credenciais invalidas"));
 
     await login(req, res as any);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Credenciais inválidas" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Nao foi possivel processar a solicitacao.",
+    });
   });
 });

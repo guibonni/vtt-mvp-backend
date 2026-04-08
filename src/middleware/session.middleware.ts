@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express"
 import { prisma } from "../config/prisma"
 import { AuthRequest } from "./auth.middleware"
+import { sendErrorResponse } from "../utils/api-error"
 
 export async function sessionGuard(
   req: AuthRequest,
@@ -14,9 +15,12 @@ export async function sessionGuard(
     const userId = req.userId
 
     if (!sessionId) {
-      return res.status(400).json({
-        message: "SessionId não informado"
-      })
+      return sendErrorResponse(
+        res,
+        400,
+        "session.middleware.missingSessionId",
+        new Error("Session identifier was not provided"),
+      )
     }
 
     const participant = await prisma.sessionParticipant.findUnique({
@@ -29,18 +33,24 @@ export async function sessionGuard(
     })
 
     if (!participant) {
-      return res.status(403).json({
-        message: "Usuário não participa dessa sessão"
-      })
+      return sendErrorResponse(
+        res,
+        403,
+        "session.middleware.userNotParticipant",
+        new Error(`User ${userId} is not a participant of session ${sessionId}`),
+      )
     }
 
     next()
 
   } catch (error) {
 
-    res.status(500).json({
-      message: "Erro ao validar sessão"
-    })
+    return sendErrorResponse(
+      res,
+      500,
+      "session.middleware.validationFailed",
+      error,
+    )
 
   }
 }

@@ -7,6 +7,7 @@ import {
   updateCharacter,
   deleteCharacter,
 } from "../services/character.service";
+import { sendErrorResponse } from "../utils/api-error";
 import { getRequiredParam } from "../utils/parameter-validation";
 
 export async function create(req: AuthRequest, res: Response) {
@@ -18,7 +19,7 @@ export async function create(req: AuthRequest, res: Response) {
 
     res.json(character);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "character.controller.create", error);
   }
 }
 
@@ -30,7 +31,7 @@ export async function list(req: AuthRequest, res: Response) {
 
     res.json(characters);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "character.controller.list", error);
   }
 }
 
@@ -44,7 +45,7 @@ export async function update(req: AuthRequest, res: Response) {
 
     res.json(character);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "character.controller.update", error);
   }
 }
 
@@ -57,6 +58,6 @@ export async function remove(req: AuthRequest, res: Response) {
 
     res.json({ success: true });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    sendErrorResponse(res, 400, "character.controller.remove", error);
   }
 }

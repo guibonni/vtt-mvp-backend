@@ -1,6 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) => {
+    const messages: Record<number, string> = {
+      401: "Nao autorizado.",
+    };
+
+    return res.status(status).json({ message: messages[status] });
+  }),
+}));
+
 const { verifyTokenMock } = vi.hoisted(() => ({
   verifyTokenMock: vi.fn(),
 }));
@@ -24,7 +34,7 @@ describe("auth.middleware", () => {
     authMiddleware(req, res as any, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Token não fornecido" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Nao autorizado." });
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -36,7 +46,7 @@ describe("auth.middleware", () => {
     authMiddleware(req, res as any, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Token inválido" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Nao autorizado." });
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -66,7 +76,7 @@ describe("auth.middleware", () => {
     authMiddleware(req, res as any, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Token inválido" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Nao autorizado." });
     expect(next).not.toHaveBeenCalled();
   });
 });

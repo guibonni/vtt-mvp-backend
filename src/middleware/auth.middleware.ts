@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import { verifyToken } from "../utils/jwt"
+import { sendErrorResponse } from "../utils/api-error"
 
 export interface AuthRequest extends Request {
   userId?: string
@@ -13,20 +14,35 @@ export function authMiddleware(
   const authHeader = req.headers.authorization
 
   if (!authHeader) {
-    return res.status(401).json({ message: "Token não fornecido" })
+    return sendErrorResponse(
+      res,
+      401,
+      "auth.middleware.missingAuthorizationHeader",
+      new Error("Authorization header was not provided"),
+    )
   }
 
   const token = authHeader.split(" ")[1]
 
   if (!token) {
-    return res.status(401).json({ message: "Token inválido" })
+    return sendErrorResponse(
+      res,
+      401,
+      "auth.middleware.malformedAuthorizationHeader",
+      new Error("Authorization header does not contain a bearer token"),
+    )
   }
 
   try {
     const decoded = verifyToken(token) as any
     req.userId = decoded.userId
     next()
-  } catch {
-    return res.status(401).json({ message: "Token inválido" })
+  } catch (error) {
+    return sendErrorResponse(
+      res,
+      401,
+      "auth.middleware.invalidToken",
+      error,
+    )
   }
 }

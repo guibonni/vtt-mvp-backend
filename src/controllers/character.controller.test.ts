@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) =>
+    res.status(status).json({ message: "Nao foi possivel processar a solicitacao." }),
+  ),
+}));
+
 const {
   createCharacterMock,
   getSessionCharactersMock,
@@ -105,7 +111,7 @@ describe("character.controller", () => {
     expect(res.json).toHaveBeenCalledWith({ success: true });
   });
 
-  it("returns 400 when a required param is missing", async () => {
+  it("returns a generic 400 response when a required param is missing", async () => {
     const req = {
       params: { sessionId: "session-1" },
       body: { data: { hp: 8 } },
@@ -118,7 +124,7 @@ describe("character.controller", () => {
     expect(updateCharacterMock).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Parametro invalido: characterId",
+      message: "Nao foi possivel processar a solicitacao.",
     });
   });
 });

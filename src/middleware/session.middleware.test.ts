@@ -1,6 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) => {
+    const messages: Record<number, string> = {
+      400: "Nao foi possivel processar a solicitacao.",
+      403: "Acesso negado.",
+      500: "Erro interno do servidor.",
+    };
+
+    return res.status(status).json({ message: messages[status] });
+  }),
+}));
+
 const { prismaMock } = vi.hoisted(() => ({
   prismaMock: {
     sessionParticipant: {
@@ -32,7 +44,9 @@ describe("session.middleware", () => {
     await sessionGuard(req, res as any, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "SessionId não informado" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Nao foi possivel processar a solicitacao.",
+    });
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -105,7 +119,7 @@ describe("session.middleware", () => {
 
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Usuário não participa dessa sessão",
+      message: "Acesso negado.",
     });
     expect(next).not.toHaveBeenCalled();
   });
@@ -125,7 +139,7 @@ describe("session.middleware", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Erro ao validar sessão",
+      message: "Erro interno do servidor.",
     });
     expect(next).not.toHaveBeenCalled();
   });

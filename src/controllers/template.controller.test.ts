@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) =>
+    res.status(status).json({ message: "Nao foi possivel processar a solicitacao." }),
+  ),
+}));
+
 const {
   createTemplateMock,
   listTemplatesMock,
@@ -113,7 +119,7 @@ describe("template.controller", () => {
     expect(res.json).toHaveBeenCalledWith({ success: true });
   });
 
-  it("returns 400 when templateId param is missing", async () => {
+  it("returns a generic 400 response when templateId param is missing", async () => {
     const req = {
       params: {},
       userId: "user-1",
@@ -125,7 +131,7 @@ describe("template.controller", () => {
     expect(getTemplateByIdMock).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Parametro invalido: templateId",
+      message: "Nao foi possivel processar a solicitacao.",
     });
   });
 });

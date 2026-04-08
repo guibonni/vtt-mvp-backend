@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createResponse } from "../test-utils/http";
 
+vi.mock("../utils/api-error", () => ({
+  sendErrorResponse: vi.fn((res, status) =>
+    res.status(status).json({ message: "Nao foi possivel processar a solicitacao." }),
+  ),
+}));
+
 const {
   createSessionMock,
   listSessionsMock,
@@ -42,7 +48,7 @@ describe("session.controller", () => {
     expect(res.json).toHaveBeenCalledWith({ id: "session-1" });
   });
 
-  it("create returns 400 on service error", async () => {
+  it("create returns a generic 400 response on service error", async () => {
     const req = {
       body: { name: "Mesa", password: "secret" },
       userId: "user-1",
@@ -54,7 +60,9 @@ describe("session.controller", () => {
     await create(req, res as any);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Falha" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Nao foi possivel processar a solicitacao.",
+    });
   });
 
   it("list returns all sessions", async () => {
@@ -103,7 +111,7 @@ describe("session.controller", () => {
     expect(res.json).toHaveBeenCalledWith({ id: "session-1" });
   });
 
-  it("get returns 400 when sessionId is missing", async () => {
+  it("get returns a generic 400 response when sessionId is missing", async () => {
     const req = {
       params: {},
       userId: "user-1",
@@ -115,7 +123,7 @@ describe("session.controller", () => {
     expect(getSessionMock).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Parametro invalido: sessionId",
+      message: "Nao foi possivel processar a solicitacao.",
     });
   });
 });
