@@ -58,14 +58,14 @@ describe("session.controller", () => {
   });
 
   it("list returns all sessions", async () => {
-    const req = {} as any;
+    const req = { userId: "user-1" } as any;
     const res = createResponse();
 
     listSessionsMock.mockResolvedValue([{ id: "session-1" }]);
 
     await list(req, res as any);
 
-    expect(listSessionsMock).toHaveBeenCalled();
+    expect(listSessionsMock).toHaveBeenCalledWith("user-1");
     expect(res.json).toHaveBeenCalledWith([{ id: "session-1" }]);
   });
 

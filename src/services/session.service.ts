@@ -17,13 +17,18 @@ export async function createSession(
       name,
       passwordHash,
       createdById: userId,
+      participants: {
+        create: {
+          userId,
+        },
+      },
     },
   });
 
   return session;
 }
 
-export async function listSessions() {
+export async function listSessions(userId: string) {
   const sessions = await prisma.session.findMany({
     select: {
       id: true,
@@ -34,10 +39,21 @@ export async function listSessions() {
           name: true,
         },
       },
+      participants: {
+        where: {
+          userId,
+        },
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
-  return sessions;
+  return sessions.map(({ participants, ...session }) => ({
+    ...session,
+    isParticipant: participants.length > 0,
+  }));
 }
 
 export async function joinSession(

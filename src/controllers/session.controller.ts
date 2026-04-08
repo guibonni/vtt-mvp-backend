@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Response } from "express"
 import { AuthRequest } from "../middleware/auth.middleware"
 
 import {
@@ -30,11 +30,11 @@ export async function create(req: AuthRequest, res: Response) {
   }
 }
 
-export async function list(req: Request, res: Response) {
+export async function list(req: AuthRequest, res: Response) {
 
   try {
 
-    const sessions = await listSessions()
+    const sessions = await listSessions(req.userId!)
 
     res.json(sessions)
 

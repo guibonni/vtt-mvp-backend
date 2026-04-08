@@ -49,6 +49,11 @@ describe("session.service", () => {
         name: "Mesa",
         passwordHash: "hashed-password",
         createdById: "user-1",
+        participants: {
+          create: {
+            userId: "user-1",
+          },
+        },
       },
     });
     expect(result).toEqual({ id: "session-1" });
@@ -65,14 +70,34 @@ describe("session.service", () => {
         name: "Mesa",
         passwordHash: null,
         createdById: "user-1",
+        participants: {
+          create: {
+            userId: "user-1",
+          },
+        },
       },
     });
   });
 
   it("lists sessions", async () => {
-    prismaMock.session.findMany.mockResolvedValue([{ id: "session-1" }]);
+    prismaMock.session.findMany.mockResolvedValue([
+      {
+        id: "session-1",
+        name: "Mesa 1",
+        createdAt: new Date("2026-04-08T00:00:00.000Z"),
+        createdBy: { name: "Ana" },
+        participants: [{ id: "participant-1" }],
+      },
+      {
+        id: "session-2",
+        name: "Mesa 2",
+        createdAt: new Date("2026-04-08T00:00:00.000Z"),
+        createdBy: { name: "Beto" },
+        participants: [],
+      },
+    ]);
 
-    const result = await listSessions();
+    const result = await listSessions("user-1");
 
     expect(prismaMock.session.findMany).toHaveBeenCalledWith({
       select: {
@@ -84,9 +109,32 @@ describe("session.service", () => {
             name: true,
           },
         },
+        participants: {
+          where: {
+            userId: "user-1",
+          },
+          select: {
+            id: true,
+          },
+        },
       },
     });
-    expect(result).toEqual([{ id: "session-1" }]);
+    expect(result).toEqual([
+      {
+        id: "session-1",
+        name: "Mesa 1",
+        createdAt: new Date("2026-04-08T00:00:00.000Z"),
+        createdBy: { name: "Ana" },
+        isParticipant: true,
+      },
+      {
+        id: "session-2",
+        name: "Mesa 2",
+        createdAt: new Date("2026-04-08T00:00:00.000Z"),
+        createdBy: { name: "Beto" },
+        isParticipant: false,
+      },
+    ]);
   });
 
   it("throws when session is not found during join", async () => {
