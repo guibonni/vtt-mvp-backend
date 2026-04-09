@@ -16,7 +16,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n \"name\": \"Guilherme\",\r\n \"email\": \"teste@1.com\",\r\n \"password\": \"123\"\r\n}",
+              "raw": "{\r\n \"name\": \"Guilherme\",\r\n \"email\": \"gui.bonni@gmail.com\",\r\n \"password\": \"123456\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -31,6 +31,34 @@
               "path": [
                 "auth",
                 "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n \"email\": \"gui.bonni@gmail.com\",\r\n \"code\": \"374161\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/auth/register/verify",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "verify"
               ]
             }
           },
@@ -149,7 +177,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Hadaverso\",\r\n    \"password\": \"123\"\r\n}",
+              "raw": "{\r\n    \"name\": \"Campanha nova\",\r\n    \"password\": \"123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -272,7 +300,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                  "value": "0dccf295-4706-4330-be8f-b077a9993568"
                 }
               ]
             }
@@ -340,7 +368,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"data\": \"{charisma: 20}\"\r\n}",
+              "raw": "{\r\n    \"data\": {\r\n        \"field-5rr8nta7\": 10,\r\n        \"field-7cx7z5a5\": 3,\r\n        \"field-7lj9ws1f\": \"1,90m\",\r\n        \"field-i0u9a9qa\": \"Um cara normal\",\r\n        \"field-mliqti3g\": 35,\r\n        \"field-od7o4c90\": \"guerreiro\",\r\n        \"field-qutzrlem\": \"humanos\",\r\n        \"field-zr0chznk\": 5\r\n    }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -361,11 +389,11 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "bf50587f-1927-480b-8285-0aaa2e4eeddf"
+                  "value": "0dccf295-4706-4330-be8f-b077a9993568"
                 },
                 {
                   "key": "characterId",
-                  "value": "c35fbddf-9b6c-4a13-9fe2-f5a014620ffb"
+                  "value": "c5415658-a1d2-4180-8f4b-6236d73bfce0"
                 }
               ]
             }
@@ -645,6 +673,76 @@
                   "key": "templateId",
                   "value": "91cb5088-0102-4ae1-9010-ca2301e3bf06"
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "get preferences",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/user/preferences",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "user",
+                "preferences"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set preferences",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"preferences\": {\r\n        \"theme\": \"dark\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/user/preferences",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "user",
+                "preferences"
               ]
             }
           },

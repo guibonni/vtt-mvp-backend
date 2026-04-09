@@ -21,6 +21,16 @@ model User {
   participations   SessionParticipant[]
 }
 
+model PendingUserRegistration {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  codeHash     String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
 model Session {
   id           String   @id @default(uuid())
   name         String

@@ -32,7 +32,7 @@ paths:
   /auth/register:
     post:
       tags: [Auth]
-      summary: Registrar usuário
+      summary: Iniciar cadastro de usuário
       security: []
       requestBody:
         required: true
@@ -45,14 +45,42 @@ paths:
               email: gui@example.com
               password: "123456"
       responses:
-        '200':
-          description: Usuário registrado com sucesso
+        '202':
+          description: Cadastro pendente criado e código de verificação enviado por email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterPendingResponse'
+        '400':
+          description: Erro de validação/regra de negócio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/register/verify:
+    post:
+      tags: [Auth]
+      summary: Confirmar cadastro com código de verificação
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRegisterRequest'
+            example:
+              email: gui@example.com
+              code: "123456"
+      responses:
+        '201':
+          description: Código validado e usuário criado com sucesso
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
         '400':
-          description: Erro de validação/regra de negócio
+          description: Código inválido, expirado ou cadastro pendente não encontrado
           content:
             application/json:
               schema:
@@ -758,6 +786,30 @@ components:
         password:
           type: string
       required: [name, email, password]
+
+    VerifyRegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+          description: Código de verificação enviado por email
+      required: [email, code]
+
+    RegisterPendingResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        email:
+          type: string
+          format: email
+      required: [message, email]
+      example:
+        message: Código de verificação enviado para o email informado.
+        email: gui@example.com
 
     LoginRequest:
       type: object
