@@ -24,6 +24,29 @@ const openApiDocument = YAML.load(openApiPath);
 
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  const startedAt = Date.now();
+
+  console.log(
+    `[request:start] ${req.method} ${req.originalUrl} ip=${req.ip ?? "unknown"}`,
+  );
+
+  res.on("finish", () => {
+    console.log(
+      `[request:finish] ${req.method} ${req.originalUrl} status=${res.statusCode} durationMs=${Date.now() - startedAt}`,
+    );
+  });
+
+  res.on("close", () => {
+    if (!res.writableEnded) {
+      console.warn(
+        `[request:close] ${req.method} ${req.originalUrl} connection closed before response finished after ${Date.now() - startedAt}ms`,
+      );
+    }
+  });
+
+  next();
+});
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 app.get("/docs/openapi.yaml", (_req, res) => {
@@ -57,6 +80,30 @@ export const io = new Server(server, {
 initializeSocket();
 
 const PORT = process.env.PORT || 4000;
+
+process.on("unhandledRejection", (reason) => {
+  console.error("[process:unhandledRejection]", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("[process:uncaughtException]", error);
+});
+
+process.on("SIGTERM", () => {
+  console.warn("[process:signal] Received SIGTERM");
+});
+
+process.on("SIGINT", () => {
+  console.warn("[process:signal] Received SIGINT");
+});
+
+server.on("error", (error) => {
+  console.error("[server:error]", error);
+});
+
+server.on("close", () => {
+  console.warn("[server:close] HTTP server closed");
+});
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
