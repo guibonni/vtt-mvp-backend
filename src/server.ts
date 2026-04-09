@@ -1,21 +1,19 @@
 import "dotenv/config";
-import express from "express";
 import cors from "cors";
+import express from "express";
 import http from "http";
 import path from "path";
 import { Server } from "socket.io";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
-import { initializeSocket } from "./socket/socket";
-
 import { authMiddleware } from "./middleware/auth.middleware";
-
 import authRoutes from "./routes/auth.routes";
-import sessionRoutes from "./routes/session.routes";
 import characterRoutes from "./routes/character.routes";
 import messageRoutes from "./routes/message.routes";
+import sessionRoutes from "./routes/session.routes";
 import templateRoutes from "./routes/template.routes";
 import userRoutes from "./routes/user.routes";
+import { initializeSocket } from "./socket/socket";
 
 const app = express();
 
@@ -53,7 +51,15 @@ app.get("/docs/openapi.yaml", (_req, res) => {
   res.sendFile(openApiPath);
 });
 
-// Rotas públicas
+app.get("/", (_req, res) => {
+  res.send("VTT Backend Running");
+});
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
+// Rotas publicas
 app.use("/auth", authRoutes);
 
 app.use(authMiddleware);
@@ -65,11 +71,41 @@ app.use("/sessions", messageRoutes);
 app.use("/templates", templateRoutes);
 app.use("/user", userRoutes);
 
-app.get("/", (_req, res) => {
-  res.send("VTT Backend Running");
+const server = http.createServer(app);
+
+server.on("connection", (socket) => {
+  console.log(
+    `[server:connection] remote=${socket.remoteAddress ?? "unknown"}:${socket.remotePort ?? "unknown"}`,
+  );
+
+  socket.on("close", (hadError) => {
+    console.log(
+      `[server:connection:close] remote=${socket.remoteAddress ?? "unknown"}:${socket.remotePort ?? "unknown"} hadError=${hadError}`,
+    );
+  });
 });
 
-const server = http.createServer(app);
+server.on("request", (req, res) => {
+  const startedAt = Date.now();
+
+  console.log(
+    `[server:request] ${req.method ?? "UNKNOWN"} ${req.url ?? "unknown"}`,
+  );
+
+  res.on("finish", () => {
+    console.log(
+      `[server:response] ${req.method ?? "UNKNOWN"} ${req.url ?? "unknown"} status=${res.statusCode} durationMs=${Date.now() - startedAt}`,
+    );
+  });
+});
+
+server.on("clientError", (error, socket) => {
+  console.error("[server:clientError]", error.message);
+
+  if (socket.writable) {
+    socket.end("HTTP/1.1 400 Bad Request\r\n\r\n");
+  }
+});
 
 export const io = new Server(server, {
   cors: {
