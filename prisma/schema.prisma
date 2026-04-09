@@ -11,6 +11,7 @@ model User {
   name         String
   email        String   @unique
   passwordHash String
+  preferences  Json     @default("{}")
   createdAt    DateTime @default(now())
 
   sessionsCreated  Session[]
